@@ -1,16 +1,9 @@
 from collections import deque
-from enum import Enum
-from exceptions import InvalidMoveException
+from directions import Directions
 import itertools
 import logging
 import operator
 import time
-
-class Directions(Enum):
-    RIGHT = 1
-    DOWN = 2
-    LEFT = 3
-    UP = 4
 
 DIRECTION_DELTAS = {
     Directions.RIGHT: (1, 0),
@@ -71,7 +64,7 @@ class Snake():
         else:
             self.deque.popleft()
 
-        logging.info(f"Snake: {self.deque}")
+        #logging.info(f"Snake: {self.deque}")
 
     def get_head_position(self):
         return self.deque[-1]

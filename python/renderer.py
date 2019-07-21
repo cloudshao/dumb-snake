@@ -1,15 +1,11 @@
 import curses
+import exceptions
 import logging
-from board import Board
-from snake import Snake, Directions
 from apple import Apple
-
-INPUT_TO_DIRECTION = {
-    "KEY_UP": Directions.UP,
-    "KEY_LEFT": Directions.LEFT,
-    "KEY_DOWN": Directions.DOWN,
-    "KEY_RIGHT": Directions.RIGHT,
-}
+from board import Board
+from directions import Directions
+from input import Input
+from snake import Snake
 
 class Renderer():
 
@@ -20,6 +16,7 @@ class Renderer():
         self.board = Board(size[1], size[0]-1)
         self.snake = Snake((int(size[1]/2), int(size[0]/2)))
         self.apple = Apple(size[1], size[0]-1)
+        self.input = Input()
         curses.noecho()
         curses.cbreak()
         curses.curs_set(0)
@@ -30,16 +27,12 @@ class Renderer():
         self.gameover = False
 
     def update(self):
-
         # Propagate user inputs
         try:
-            userinput = self.window.getkey()
-            logging.info(f"userinput: {userinput}")
-        except Exception as e:
-            userinput = None
-        if userinput in INPUT_TO_DIRECTION:
-            direction = INPUT_TO_DIRECTION[userinput]
+            direction = self.input.get_input(self.window)
             self.snake.change_dir(direction)
+        except exceptions.NoInputException:
+            pass # Just skip if there's no input
 
         # Update game object state
         self.snake.update()
@@ -63,6 +56,7 @@ class Renderer():
         self.board.render(self.window)
         self.snake.render(self.window)
         self.apple.render(self.window)
+        self.input.render(self.window)
         self.window.refresh()
 
     def terminate(self):

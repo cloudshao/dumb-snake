@@ -3,3 +3,6 @@ class SnakeException(Exception):
 
 class InvalidMoveException(SnakeException):
     pass
+
+class NoInputException(SnakeException):
+    pass
