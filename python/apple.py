@@ -15,4 +15,4 @@ class Apple:
         return self.pos == pos
 
     def render(self, window):
-        window.addstr(self.pos[1], self.pos[0], "g")
+        window.addstr(self.pos[1], self.pos[0], "")
