@@ -1,5 +1,6 @@
 import exceptions
 import logging
+import voice_input
 from directions import Directions
 
 INPUT_TO_DIRECTION = {
@@ -27,8 +28,9 @@ class Input:
 
     def __init__(self):
         self.command_line = ""
+        self.voice_enabled = False
 
-    def _get_keyboard_direction(self, window):
+    def _get_direction(self, window):
         # Get a key from the keyboard
         userinput = None
         try:
@@ -36,6 +38,10 @@ class Input:
             logging.info(f"userinput: {userinput}")
         except Exception as e:
             pass
+
+        # If it's v, toggle voice on/off
+        if userinput == "v":
+            self.voice_enabled = not self.voice_enabled
 
         # If it's a left/right/up/down direction, translate and return it
         if userinput in INPUT_TO_DIRECTION:
@@ -50,7 +56,7 @@ class Input:
                 self.command_line = new_command_line
 
         # If it's the enter key, process what's on the command_line
-        if userinput == "\n":
+        if userinput == " ":
             command = self.command_line
             self.command_line = ""
             if command in CMD_TO_DIRECTION:
@@ -59,7 +65,12 @@ class Input:
         return None
 
     def get_input(self, window):
-        key_input = self._get_keyboard_direction(window)
+        if self.voice_enabled:
+            voice_command = voice_input.get_direction()
+            if voice_command in CMD_TO_DIRECTION:
+                return CMD_TO_DIRECTION[voice_command]
+
+        key_input = self._get_direction(window)
         if key_input:
             return key_input
 
@@ -68,3 +79,5 @@ class Input:
     def render(self, window):
         size = window.getmaxyx()
         window.addstr(size[0]-1, 0, self.command_line)
+        if self.voice_enabled:
+            window.addstr(size[0]-1, 10, "voice")
