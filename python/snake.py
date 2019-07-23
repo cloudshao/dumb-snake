@@ -12,6 +12,13 @@ DIRECTION_DELTAS = {
     Directions.UP: (0, -1),
 }
 
+DIRECTION_OPPOSITES = {
+    Directions.RIGHT: Directions.LEFT,
+    Directions.DOWN: Directions.UP,
+    Directions.LEFT: Directions.RIGHT,
+    Directions.UP: Directions.DOWN,
+}
+
 class Snake():
 
     def __init__(self, position):
@@ -25,14 +32,19 @@ class Snake():
     def render(self, window):
         for x, y in self.deque:
             # TODO: this should be relative to the board's coorindates
-            window.addstr(y, x, "o")
+            window.addstr(y, x, "█")
 
     def change_dir(self, direction):
         assert(direction in Directions)
+
+        # Don't allow a turn in the opposite direction
+        if direction in DIRECTION_OPPOSITES and self.dir == DIRECTION_OPPOSITES[direction]:
+            return
+
         self.dir = direction
 
     def grow(self):
-        self.amount_to_grow +=4
+        self.amount_to_grow +=6
 
     def self_intersects(self):
         head = self.deque[-1]
@@ -44,7 +56,7 @@ class Snake():
 
         # Is it time to move yet?
         currtime = time.time()
-        if currtime - self.last_update < 0.125:
+        if currtime - self.last_update < 0.5:
             return
 
         # Does the snake not yet have a direction? (before game start)
