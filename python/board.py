@@ -1,10 +1,13 @@
 import logging
 
+GAME_OVER_TEXT = "GAME OVER"
+
 class Board():
 
     def __init__(self, w, h):
         self.w = w
         self.h = h
+        self.game_over = False
 
     def is_outside_bounds(self, pos):
         x, y = pos
@@ -16,7 +19,11 @@ class Board():
         return False
 
     def render(self, window):
-        pass
+        if self.game_over:
+            center_x = int(self.w/2)
+            center_y = int(self.h/2)
+            text_offset = int(len(GAME_OVER_TEXT)/2)
+            window.addstr(center_y, center_x-text_offset, GAME_OVER_TEXT)
         # top and bottom borders
         #for i in range(self.w):
             #logging.info("addstr {0},{1}".format(0, i))

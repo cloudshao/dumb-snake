@@ -3,7 +3,7 @@ import exceptions
 import logging
 from apple import Apple
 from board import Board
-from directions import Directions
+from directions import Directions, Instructions
 from input import Input
 from snake import Snake
 
@@ -29,8 +29,14 @@ class Renderer():
     def update(self):
         # Propagate user inputs
         try:
-            direction = self.input.get_input(self.window)
-            self.snake.change_dir(direction)
+            input = self.input.get_input(self.window)
+            if isinstance(input, Directions):
+                self.snake.change_dir(input)
+            elif isinstance(input, Instructions):
+                if input == Instructions.SPEED_UP:
+                    self.snake.change_speed(0.1)
+                elif input == Instructions.SPEED_DOWN:
+                    self.snake.change_speed(-0.1)
         except exceptions.NoInputException:
             pass # Just skip if there's no input
 
@@ -46,10 +52,8 @@ class Renderer():
         # Check for game over
         if self.board.is_outside_bounds(snakehead) or self.snake.self_intersects():
             self.gameover = True
-
-        if self.gameover:
-            logging.info(f"The game is over")
-            return
+            self.board.game_over = True
+            self.snake.is_active = False
 
         # Render
         self.window.erase()

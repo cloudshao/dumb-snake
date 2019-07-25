@@ -1,7 +1,7 @@
 import exceptions
 import logging
 import voice_input
-from directions import Directions
+from directions import Directions, Instructions
 
 INPUT_TO_DIRECTION = {
     "KEY_UP": Directions.UP,
@@ -15,6 +15,11 @@ CMD_TO_DIRECTION = {
     "left": Directions.LEFT,
     "down": Directions.DOWN,
     "right": Directions.RIGHT,
+}
+
+CMD_TO_INSTRUCTION = {
+    "[": Instructions.SPEED_DOWN,
+    "]": Instructions.SPEED_UP,
 }
 
 def _is_prefix_of_cmd(string):
@@ -42,6 +47,10 @@ class Input:
         # If it's v, toggle voice on/off
         if userinput == "v":
             self.voice_enabled = not self.voice_enabled
+
+        # If it's [ or ], change speed
+        if userinput in CMD_TO_INSTRUCTION:
+            return CMD_TO_INSTRUCTION[userinput]
 
         # If it's a left/right/up/down direction, translate and return it
         if userinput in INPUT_TO_DIRECTION:

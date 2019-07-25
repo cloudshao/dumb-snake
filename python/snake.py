@@ -26,13 +26,17 @@ class Snake():
         self.deque = deque()
         self.deque.append(position)
         self.last_update = 0.0
+        self.time_between_updates = 0.1
         self.dir = None
         self.amount_to_grow = 0
+        self.is_active = True
 
     def render(self, window):
+        maxyx = window.getmaxyx()
         for x, y in self.deque:
             # TODO: this should be relative to the board's coorindates
-            window.addstr(y, x, "█")
+            if 0 < y < maxyx[0] and 0 < x < maxyx[1]:
+                window.addstr(y, x, "█")
 
     def change_dir(self, direction):
         assert(direction in Directions)
@@ -42,6 +46,9 @@ class Snake():
             return
 
         self.dir = direction
+
+    def change_speed(self, delta):
+        self.time_between_updates -= delta
 
     def grow(self):
         self.amount_to_grow +=6
@@ -54,9 +61,12 @@ class Snake():
 
     def update(self):
 
+        if not self.is_active:
+            return
+
         # Is it time to move yet?
         currtime = time.time()
-        if currtime - self.last_update < 0.5:
+        if currtime - self.last_update < self.time_between_updates:
             return
 
         # Does the snake not yet have a direction? (before game start)
