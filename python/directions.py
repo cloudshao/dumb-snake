@@ -10,3 +10,5 @@ class Directions(Enum):
 class Instructions(Enum):
     SPEED_UP = 1
     SPEED_DOWN = 2
+    TURN_LEFT = 3
+    TURN_RIGHT = 4

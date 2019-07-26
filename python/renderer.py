@@ -37,6 +37,8 @@ class Renderer():
                     self.snake.change_speed(0.1)
                 elif input == Instructions.SPEED_DOWN:
                     self.snake.change_speed(-0.1)
+                elif input == Instructions.TURN_RIGHT or input == Instructions.TURN_LEFT:
+                    self.snake.change_dir(input)
         except exceptions.NoInputException:
             pass # Just skip if there's no input
 

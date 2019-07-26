@@ -1,5 +1,5 @@
 from collections import deque
-from directions import Directions
+from directions import Directions, Instructions
 import itertools
 import logging
 import operator
@@ -17,6 +17,30 @@ DIRECTION_OPPOSITES = {
     Directions.DOWN: Directions.UP,
     Directions.LEFT: Directions.RIGHT,
     Directions.UP: Directions.DOWN,
+}
+
+# Given we're already going in a direction, what do left/right mean?
+DIRECTION_TURNS = {
+    None: {
+        Instructions.TURN_LEFT: Directions.LEFT,
+        Instructions.TURN_RIGHT: Directions.RIGHT,
+    },
+    Directions.UP: {
+        Instructions.TURN_LEFT: Directions.LEFT,
+        Instructions.TURN_RIGHT: Directions.RIGHT,
+    },
+    Directions.DOWN: {
+        Instructions.TURN_LEFT: Directions.RIGHT,
+        Instructions.TURN_RIGHT: Directions.LEFT,
+    },
+    Directions.LEFT: {
+        Instructions.TURN_LEFT: Directions.DOWN,
+        Instructions.TURN_RIGHT: Directions.UP,
+    },
+    Directions.RIGHT: {
+        Instructions.TURN_LEFT: Directions.UP,
+        Instructions.TURN_RIGHT: Directions.DOWN,
+    },
 }
 
 class Snake():
@@ -39,7 +63,9 @@ class Snake():
                 window.addstr(y, x, "█")
 
     def change_dir(self, direction):
-        assert(direction in Directions)
+        if isinstance(direction, Instructions):
+            # Compute the absolute direction
+            direction = DIRECTION_TURNS[self.dir][direction]
 
         # Don't allow a turn in the opposite direction
         if direction in DIRECTION_OPPOSITES and self.dir == DIRECTION_OPPOSITES[direction]:

@@ -20,6 +20,8 @@ CMD_TO_DIRECTION = {
 CMD_TO_INSTRUCTION = {
     "[": Instructions.SPEED_DOWN,
     "]": Instructions.SPEED_UP,
+    "left": Instructions.TURN_LEFT,
+    "right": Instructions.TURN_RIGHT,
 }
 
 def _is_prefix_of_cmd(string):
@@ -65,7 +67,7 @@ class Input:
                 self.command_line = new_command_line
 
         # If it's the enter key, process what's on the command_line
-        if userinput == " ":
+        if userinput == "\n":
             command = self.command_line
             self.command_line = ""
             if command in CMD_TO_DIRECTION:
@@ -76,8 +78,8 @@ class Input:
     def get_input(self, window):
         if self.voice_enabled:
             voice_command = voice_input.get_direction()
-            if voice_command in CMD_TO_DIRECTION:
-                return CMD_TO_DIRECTION[voice_command]
+            if voice_command in CMD_TO_INSTRUCTION:
+                return CMD_TO_INSTRUCTION[voice_command]
 
         key_input = self._get_direction(window)
         if key_input:
