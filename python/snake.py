@@ -1,45 +1,45 @@
 from collections import deque
-from directions import Directions, Instructions
+from instructions import Instructions, DIRECTIONS, SPEED_CHANGES, TURNS
 import itertools
 import logging
 import operator
 import time
 
 DIRECTION_DELTAS = {
-    Directions.RIGHT: (1, 0),
-    Directions.DOWN: (0, 1),
-    Directions.LEFT: (-1, 0),
-    Directions.UP: (0, -1),
+    Instructions.RIGHT: (1, 0),
+    Instructions.DOWN: (0, 1),
+    Instructions.LEFT: (-1, 0),
+    Instructions.UP: (0, -1),
 }
 
 DIRECTION_OPPOSITES = {
-    Directions.RIGHT: Directions.LEFT,
-    Directions.DOWN: Directions.UP,
-    Directions.LEFT: Directions.RIGHT,
-    Directions.UP: Directions.DOWN,
+    Instructions.RIGHT: Instructions.LEFT,
+    Instructions.DOWN: Instructions.UP,
+    Instructions.LEFT: Instructions.RIGHT,
+    Instructions.UP: Instructions.DOWN,
 }
 
 # Given we're already going in a direction, what do left/right mean?
 DIRECTION_TURNS = {
     None: {
-        Instructions.TURN_LEFT: Directions.LEFT,
-        Instructions.TURN_RIGHT: Directions.RIGHT,
+        Instructions.TURN_LEFT: Instructions.LEFT,
+        Instructions.TURN_RIGHT: Instructions.RIGHT,
     },
-    Directions.UP: {
-        Instructions.TURN_LEFT: Directions.LEFT,
-        Instructions.TURN_RIGHT: Directions.RIGHT,
+    Instructions.UP: {
+        Instructions.TURN_LEFT: Instructions.LEFT,
+        Instructions.TURN_RIGHT: Instructions.RIGHT,
     },
-    Directions.DOWN: {
-        Instructions.TURN_LEFT: Directions.RIGHT,
-        Instructions.TURN_RIGHT: Directions.LEFT,
+    Instructions.DOWN: {
+        Instructions.TURN_LEFT: Instructions.RIGHT,
+        Instructions.TURN_RIGHT: Instructions.LEFT,
     },
-    Directions.LEFT: {
-        Instructions.TURN_LEFT: Directions.DOWN,
-        Instructions.TURN_RIGHT: Directions.UP,
+    Instructions.LEFT: {
+        Instructions.TURN_LEFT: Instructions.DOWN,
+        Instructions.TURN_RIGHT: Instructions.UP,
     },
-    Directions.RIGHT: {
-        Instructions.TURN_LEFT: Directions.UP,
-        Instructions.TURN_RIGHT: Directions.DOWN,
+    Instructions.RIGHT: {
+        Instructions.TURN_LEFT: Instructions.UP,
+        Instructions.TURN_RIGHT: Instructions.DOWN,
     },
 }
 
@@ -58,22 +58,33 @@ class Snake():
     def render(self, window):
         maxyx = window.getmaxyx()
         for x, y in self.deque:
-            # TODO: this should be relative to the board's coorindates
             if 0 < y < maxyx[0] and 0 < x < maxyx[1]:
                 window.addstr(y, x, "█")
 
-    def change_dir(self, direction):
-        if isinstance(direction, Instructions):
-            # Compute the absolute direction
-            direction = DIRECTION_TURNS[self.dir][direction]
+    def process_instruction(self, instruction):
+        if instruction in DIRECTIONS:
+            self._change_dir(instruction)
+        elif instruction in SPEED_CHANGES:
+            if instruction == Instructions.SPEED_UP:
+                self._change_speed(0.1)
+            elif instruction == Instructions.SPEED_DOWN:
+                self._change_speed(-0.1)
+        elif instruction in TURNS:
+            self._turn(instruction)
 
-        # Don't allow a turn in the opposite direction
+    def _turn(self, direction):
+        # Compute the absolute direction
+        direction = DIRECTION_TURNS[self.dir][direction]
+        self.dir = direction
+
+    def _change_dir(self, direction):
+        # Don't allow going in the opposite direction
         if direction in DIRECTION_OPPOSITES and self.dir == DIRECTION_OPPOSITES[direction]:
             return
 
         self.dir = direction
 
-    def change_speed(self, delta):
+    def _change_speed(self, delta):
         self.time_between_updates -= delta
 
     def grow(self):
@@ -81,7 +92,6 @@ class Snake():
 
     def self_intersects(self):
         head = self.deque[-1]
-        # TODO: could be done without creating new list
         all_except_head = list(itertools.islice(self.deque, 0, len(self.deque)-1))
         return head in all_except_head
 
@@ -112,7 +122,7 @@ class Snake():
         else:
             self.deque.popleft()
 
-        #logging.info(f"Snake: {self.deque}")
+        logging.debug(f"Snake: {self.deque}")
 
     def get_head_position(self):
         return self.deque[-1]

@@ -3,14 +3,13 @@ import exceptions
 import logging
 from apple import Apple
 from board import Board
-from directions import Directions, Instructions
 from input import Input
+from instructions import Instructions
 from snake import Snake
 
 class Renderer():
 
     def __init__(self):
-        # TODO snake and board should probably be owned by a level or something
         self.window = curses.initscr()
         size = self.window.getmaxyx()
         self.board = Board(size[1], size[0]-1)
@@ -29,16 +28,8 @@ class Renderer():
     def update(self):
         # Propagate user inputs
         try:
-            input = self.input.get_input(self.window)
-            if isinstance(input, Directions):
-                self.snake.change_dir(input)
-            elif isinstance(input, Instructions):
-                if input == Instructions.SPEED_UP:
-                    self.snake.change_speed(0.1)
-                elif input == Instructions.SPEED_DOWN:
-                    self.snake.change_speed(-0.1)
-                elif input == Instructions.TURN_RIGHT or input == Instructions.TURN_LEFT:
-                    self.snake.change_dir(input)
+            instruction = self.input.get_instruction(self.window)
+            self.snake.process_instruction(instruction)
         except exceptions.NoInputException:
             pass # Just skip if there's no input
 

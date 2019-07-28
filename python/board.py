@@ -24,13 +24,3 @@ class Board():
             center_y = int(self.h/2)
             text_offset = int(len(GAME_OVER_TEXT)/2)
             window.addstr(center_y, center_x-text_offset, GAME_OVER_TEXT)
-        # top and bottom borders
-        #for i in range(self.w):
-            #logging.info("addstr {0},{1}".format(0, i))
-            #window.addstr(0, i, "X")
-            #window.addstr(self.h-1, i, "X")
-        # left and right borders
-        #for j in range(self.h):
-            #logging.info("addstr {0},{1}".format(j, 0))
-            #window.addstr(j, 0, "X")
-            #window.addstr(j, self.w-1, "X")
