@@ -1,6 +1,5 @@
 import exceptions
 import logging
-import voice_input
 from instructions import Instructions
 
 INPUT_TO_DIRECTION = {
@@ -78,6 +77,7 @@ class Input:
     def get_instruction(self, window):
         # Try getting voice input
         if self.voice_enabled:
+            import voice_input
             try:
                 instruction = voice_input.get_instruction()
                 return instruction
