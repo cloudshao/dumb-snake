@@ -1,4 +1,4 @@
-# Snake Game using Python Curses
+# Snake Game using Python Curses with Voice Controls
 
 ## How to Run
 
