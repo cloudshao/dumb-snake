@@ -12,10 +12,10 @@ python main.py
 Press an arrow key to start. Press `[` and `]` to speed up/down.
 
 ### Command Line Controls
-This game has optional (and very pointless) command line input. Type a direction (eg. `left`), and hit enter.
+This game has optional and very pointless command line input. Type a direction (eg. `left`), and hit enter.
 
 ### Voice Controls
-To enable voice, install the dependencies below and then press `v`. Say `left` or `right` into your microphone.
+To enable the infuriating voice interface, install the dependencies below and then press `v`. Say `left` or `right` into your microphone.
 
 ## Dependencies
 
